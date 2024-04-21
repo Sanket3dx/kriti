@@ -82,7 +82,6 @@ pub fn parse(tokens: &[Token]) -> Result<(), String> {
                             Token::Loop => {
                                 // Parse loop statement
                                 index += 1; 
-                                            // You can implement parsing of loop statement here
                             }
                             Token::Match => {
                                 // Parse match expression
