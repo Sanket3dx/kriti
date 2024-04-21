@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Token {
     // Existing variants
     // Data types
@@ -13,10 +13,10 @@ pub enum Token {
     // UInt64,
 
     // Keywords
-    Let,
     If,
     Else,
     Loop,
+    Match,
     Return,
 
     // Operators
@@ -43,6 +43,7 @@ pub enum Token {
     Semicolon,
 
     // Literals
+    Boolean(bool),
     Integer(i32),
     Float(f64),
     String(String),
@@ -55,8 +56,8 @@ pub enum Token {
 
     Karya, // Keyword for function definition
     Function(String),
-    ReturnType(String), // Return type
-    Expretion(String),  //exprestion
+    ReturnType(String),     // Return type
+    Expression(Vec<Token>), //exprestion
 
     // End of File
     Eof,
@@ -134,12 +135,13 @@ pub fn tokenize(input: &str) -> Vec<Token> {
                     }
                 } else if ident == "loop" {
                     tokens.push(Token::Loop);
-
                 } else {
                     // Check for other keywords or identifiers
                     tokens.push(match ident.as_str() {
-                        "let" => Token::Let,
+                        "true" => Token::Boolean(true),
+                        "false" => Token::Boolean(false),
                         "if" => Token::If,
+                        "match" => Token::Match,
                         "else" => Token::Else,
                         "return" => Token::Return,
                         _ => Token::Ident(ident),
@@ -210,6 +212,42 @@ pub fn tokenize(input: &str) -> Vec<Token> {
             }
             _ => println!("Unknown character: {}", c), // Handle unknown characters (optional)
         }
+    }
+    let mut expr_start = 0;
+    while expr_start < tokens.len() {
+        if let Some(Token::Ident(_)) = tokens.get(expr_start) {
+            let mut expr_end = expr_start + 1;
+            while let Some(token) = tokens.get(expr_end) {
+                match token {
+                    Token::LessThan
+                    | Token::GreaterThan
+                    | Token::LessThanOrEqual
+                    | Token::GreaterThanOrEqual => {
+                        expr_end += 1;
+                    }
+                    _ => break,
+                }
+            }
+            while let Some(token) = tokens.get(expr_end) {
+                match token {
+                    Token::Ident(_)
+                    | Token::Integer(_)
+                    | Token::Float(_)
+                    | Token::Boolean(_) => {
+                        expr_end += 1;
+                    }
+                    _ => break,
+                }
+            }
+            if expr_end > expr_start + 1 {
+                let expr_tokens = tokens[expr_start..expr_end].to_vec();
+                tokens.insert(expr_start, Token::Expression(expr_tokens));
+                for _ in 0..(expr_end - expr_start) {
+                    tokens.remove(expr_start + 1);
+                }
+            }
+        }
+        expr_start += 1;
     }
 
     tokens.push(Token::Eof);

@@ -1,0 +1,35 @@
+karya main() {
+    int32 a;
+    a = add(2,3);
+
+    if a > 10 {
+        print("x is greater than 10");
+    } else {
+        print("x is less than or equal to 10");
+    }
+    
+    b = 20
+    loop a > b {
+        print("A is greater B");
+    }
+
+    loop i = 0 ; i <= 10; i ++ {
+        print(i)
+    }
+
+    match a {
+        1 -> {
+            print("a is 1")
+        }
+        2 -> {
+           print("a is 2") 
+        }
+    }
+   
+}
+
+
+karya add(int32 a , int32 b) -> int32 {
+    return a + b;
+}
+

@@ -1,37 +1,29 @@
 mod token;
 mod parser;
-// use crate::token::Token;
-// use crate::parser::parse;
+use std::fs;
 
 fn main() {
-    let code = "
-   
-    karya add(int32 a , int32 b) -> int32 {
-        int32 a;
-        a = 5 + 3;
-        if x > 10 {
-            print(\"x is greater than 10\");
-        } else {
-            print(\"x is less than or equal to 10\");
-        }
-        
-        loop a > b {
-            
-        }
-
-        loop arr -> a {
-
-        }
-
-        loop a = 0 ; a <= 10; a ++ {
-
-        }
+    // Read the filename from the command line arguments
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() != 2 {
+        eprintln!("Usage: {} <filename>", args[0]);
+        std::process::exit(1);
     }
+    let filename = &args[1];
 
-    ";
+    // Attempt to read the contents of the file
+    let code = match fs::read_to_string(filename) {
+        Ok(content) => content,
+        Err(e) => {
+            eprintln!("Error reading file: {}", e);
+            std::process::exit(1);
+        }
+    };
 
-    let tokens = token::tokenize(code);
+    let tokens = token::tokenize(&code);
     println!("Tokens: {:?}", tokens);
 
-    let _ = parser::parse(&tokens); // Basic parsing call
+    let err = parser::parse(&tokens); // Basic parsing call
+    println!("Tokens: {:?}", err);
+
 }
