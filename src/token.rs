@@ -1,4 +1,4 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Token {
     // Existing variants
     // Data types
@@ -58,9 +58,21 @@ pub enum Token {
     Function(String),
     ReturnType(String),     // Return type
     Expression(Vec<Token>), //exprestion
-
+    Whitespace,
+    NewLine,
+    TabSpace,
     // End of File
     Eof,
+}
+
+impl Token {
+    pub fn is_whitespace(&self) -> bool {
+        // Implement logic to check if the token is whitespace
+        match self {
+            Token::Whitespace => true,
+            _ => false,
+        }
+    }
 }
 
 fn get_data_type(var_type: &str) -> Option<&str> {
@@ -78,7 +90,15 @@ pub fn tokenize(input: &str) -> Vec<Token> {
 
     while let Some(c) = chars.next() {
         match c {
-            ' ' | '\t' | '\n' => {} // Ignore whitespace
+            ' '  => {
+                tokens.push(Token::Whitespace)
+            }
+            '\t' => {
+                tokens.push(Token::TabSpace)
+            }
+            '\n' => {
+                tokens.push(Token::NewLine)
+            }
             // Handle variable declaration
             'a'..='z' | 'A'..='Z' => {
                 let mut ident = String::new();
