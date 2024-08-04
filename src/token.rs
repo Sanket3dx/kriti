@@ -90,15 +90,9 @@ pub fn tokenize(input: &str) -> Vec<Token> {
 
     while let Some(c) = chars.next() {
         match c {
-            ' '  => {
-                tokens.push(Token::Whitespace)
-            }
-            '\t' => {
-                tokens.push(Token::TabSpace)
-            }
-            '\n' => {
-                tokens.push(Token::NewLine)
-            }
+            ' ' => tokens.push(Token::Whitespace),
+            '\t' => tokens.push(Token::TabSpace),
+            '\n' => tokens.push(Token::NewLine),
             // Handle variable declaration
             'a'..='z' | 'A'..='Z' => {
                 let mut ident = String::new();
@@ -250,10 +244,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
             }
             while let Some(token) = tokens.get(expr_end) {
                 match token {
-                    Token::Ident(_)
-                    | Token::Integer(_)
-                    | Token::Float(_)
-                    | Token::Boolean(_) => {
+                    Token::Ident(_) | Token::Integer(_) | Token::Float(_) | Token::Boolean(_) => {
                         expr_end += 1;
                     }
                     _ => break,
